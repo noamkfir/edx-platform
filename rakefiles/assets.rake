@@ -27,15 +27,10 @@ def coffee_cmd(watch=false, debug=false)
         #
         # Ref: https://github.com/joyent/node/issues/2479
         #
-        # Rather than watching all of the directories in one command
-        # watch each static files subdirectory separately
-        cmds = []
-        ['lms/static/coffee', 'cms/static/coffee', 'common/static/coffee', 'common/static/xmodule'].each do |coffee_folder|
-            cmds << "node_modules/.bin/coffee --watch --compile #{coffee_folder}"
-        end
-        cmds
+        # So, instead, we use watchmedo, which works around the problem
+        "watchmedo shell-command --command 'coffee -c ${watch_src_path}' --recursive --patterns '*.coffee' --ignore-directories ."
     else
-        'node_modules/.bin/coffee --compile */static'
+        'node_modules/.bin/coffee --compile .'
     end
 end
 
