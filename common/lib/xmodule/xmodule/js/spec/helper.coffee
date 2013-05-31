@@ -64,6 +64,19 @@ jasmine.stubVideoPlayer = (context, enableParts, createPlayer=true) ->
   if createPlayer
     return new VideoPlayer(video: context.video)
 
+jasmine.stubVideoPlayerAlpha = (context, enableParts, createPlayer=true) ->
+  suite = context.suite
+  currentPartName = suite.description while suite = suite.parentSuite
+  enableParts.push currentPartName
+
+  loadFixtures 'videoalpha.html'
+  jasmine.stubRequests()
+  YT.Player = undefined
+  context.video = new VideoAlpha '#example', '.75:slowerSpeedYoutubeId,1.0:normalSpeedYoutubeId'
+  jasmine.stubYoutubePlayer()
+  if createPlayer
+    return new VideoPlayerAlpha(video: context.video)
+
 
 # Stub jQuery.cookie
 $.cookie = jasmine.createSpy('jQuery.cookie').andReturn '1.0'
