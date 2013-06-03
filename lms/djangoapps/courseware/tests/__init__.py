@@ -42,7 +42,7 @@ class BaseTestXmodule(ModuleStoreTestCase):
     # Data from YAML common/lib/xmodule/xmodule/templates/NAME/default.yaml
     TEMPLATE_NAME = ""
     DATA = {}
-    MODEL_DATA = {}
+    MODEL_DATA = {'data': '<some_module></some_module>'}
 
     def setUp(self):
 
