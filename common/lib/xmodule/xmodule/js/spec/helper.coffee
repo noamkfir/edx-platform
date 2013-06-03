@@ -41,9 +41,12 @@ jasmine.stubRequests = ->
       throw "External request attempted for #{settings.url}, which is not defined."
 
 jasmine.stubYoutubePlayer = ->
-  YT.Player = -> jasmine.createSpyObj 'YT.Player', ['cueVideoById', 'getVideoEmbedCode',
+  YT.Player = ->
+    obj = jasmine.createSpyObj 'YT.Player', ['cueVideoById', 'getVideoEmbedCode',
     'getCurrentTime', 'getPlayerState', 'getVolume', 'setVolume', 'loadVideoById',
-    'playVideo', 'pauseVideo', 'seekTo']
+    'playVideo', 'pauseVideo', 'seekTo', 'getDuration', 'getAvailablePlaybackRates', 'setPlaybackRate']
+    obj['getAvailablePlaybackRates'] = jasmine.createSpy('getAvailablePlaybackRates').andReturn [0.75, 1.0, 1.25, 1.5]
+    obj
 
 jasmine.stubVideoPlayer = (context, enableParts, createPlayer=true) ->
   enableParts = [enableParts] unless $.isArray(enableParts)
@@ -67,11 +70,11 @@ jasmine.stubVideoPlayer = (context, enableParts, createPlayer=true) ->
 jasmine.stubVideoPlayerAlpha = (context, enableParts, createPlayer=true) ->
   suite = context.suite
   currentPartName = suite.description while suite = suite.parentSuite
-  enableParts.push currentPartName
 
   loadFixtures 'videoalpha.html'
   jasmine.stubRequests()
   YT.Player = undefined
+  window.OldVideoPlayerAlpha = undefined
   context.video = new VideoAlpha '#example', '.75:slowerSpeedYoutubeId,1.0:normalSpeedYoutubeId'
   jasmine.stubYoutubePlayer()
   if createPlayer

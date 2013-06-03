@@ -1,7 +1,7 @@
-describe 'VideoCaption', ->
+describe 'VideoCaptionAlpha', ->
 
   beforeEach ->
-    spyOn(VideoCaption.prototype, 'fetchCaption').andCallThrough()
+    spyOn(VideoCaptionAlpha.prototype, 'fetchCaption').andCallThrough()
     spyOn($, 'ajaxWithPrefix').andCallThrough()
     window.onTouchBasedDevice = jasmine.createSpy('onTouchBasedDevice').andReturn false
 

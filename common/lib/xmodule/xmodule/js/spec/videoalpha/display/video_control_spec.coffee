@@ -1,25 +1,25 @@
-describe 'VideoControl', ->
+describe 'VideoControlAlpha', ->
   beforeEach ->
     window.onTouchBasedDevice = jasmine.createSpy('onTouchBasedDevice').andReturn false
-    loadFixtures 'video.html'
+    loadFixtures 'videoalpha.html'
     $('.video-controls').html ''
 
   describe 'constructor', ->
 
     it 'render the video controls', ->
-      @control = new window.VideoControl(el: $('.video-controls'))
+      @control = new window.VideoControlAlpha(el: $('.video-controls'))
       expect($('.video-controls')).toContain
       ['.slider', 'ul.vcr', 'a.play', '.vidtime', '.add-fullscreen'].join(',')
       expect($('.video-controls').find('.vidtime')).toHaveText '0:00 / 0:00'
 
     it 'bind the playback button', ->
-      @control = new window.VideoControl(el: $('.video-controls'))
+      @control = new window.VideoControlAlpha(el: $('.video-controls'))
       expect($('.video_control')).toHandleWith 'click', @control.togglePlayback
 
     describe 'when on a touch based device', ->
       beforeEach ->
         window.onTouchBasedDevice.andReturn true
-        @control = new window.VideoControl(el: $('.video-controls'))
+        @control = new window.VideoControlAlpha(el: $('.video-controls'))
 
       it 'does not add the play class to video control', ->
         expect($('.video_control')).not.toHaveClass 'play'
@@ -29,7 +29,7 @@ describe 'VideoControl', ->
     describe 'when on a non-touch based device', ->
 
       beforeEach ->
-        @control = new window.VideoControl(el: $('.video-controls'))
+        @control = new window.VideoControlAlpha(el: $('.video-controls'))
 
       it 'add the play class to video control', ->
         expect($('.video_control')).toHaveClass 'play'
@@ -38,7 +38,7 @@ describe 'VideoControl', ->
   describe 'play', ->
 
     beforeEach ->
-      @control = new window.VideoControl(el: $('.video-controls'))
+      @control = new window.VideoControlAlpha(el: $('.video-controls'))
       @control.play()
 
     it 'switch playback button to play state', ->
@@ -49,7 +49,7 @@ describe 'VideoControl', ->
   describe 'pause', ->
 
     beforeEach ->
-      @control = new window.VideoControl(el: $('.video-controls'))
+      @control = new window.VideoControlAlpha(el: $('.video-controls'))
       @control.pause()
 
     it 'switch playback button to pause state', ->
@@ -60,7 +60,7 @@ describe 'VideoControl', ->
   describe 'togglePlayback', ->
 
     beforeEach ->
-      @control = new window.VideoControl(el: $('.video-controls'))
+      @control = new window.VideoControlAlpha(el: $('.video-controls'))
 
     describe 'when the control does not have play or pause class', ->
       beforeEach ->

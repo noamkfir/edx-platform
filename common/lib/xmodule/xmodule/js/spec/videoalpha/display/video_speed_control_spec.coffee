@@ -1,4 +1,4 @@
-describe 'VideoSpeedControl', ->
+describe 'VideoSpeedControlAlpha', ->
   beforeEach ->
     window.onTouchBasedDevice = jasmine.createSpy('onTouchBasedDevice').andReturn false
     jasmine.stubVideoPlayerAlpha @
@@ -7,7 +7,7 @@ describe 'VideoSpeedControl', ->
   describe 'constructor', ->
     describe 'always', ->
       beforeEach ->
-        @speedControl = new VideoSpeedControl el: $('.secondary-controls'), speeds: @video.speeds, currentSpeed: '1.0'
+        @speedControl = new VideoSpeedControlAlpha el: $('.secondary-controls'), speeds: @video.speeds, currentSpeed: '1.0'
 
       it 'add the video speed control to player', ->
         secondaryControls = $('.secondary-controls')
@@ -28,7 +28,7 @@ describe 'VideoSpeedControl', ->
       beforeEach ->
         window.onTouchBasedDevice.andReturn true
         $('.speeds').removeClass 'open'
-        @speedControl = new VideoSpeedControl el: $('.secondary-controls'), speeds: @video.speeds, currentSpeed: '1.0'
+        @speedControl = new VideoSpeedControlAlpha el: $('.secondary-controls'), speeds: @video.speeds, currentSpeed: '1.0'
 
       it 'open the speed toggle on click', ->
         $('.speeds').click()
@@ -39,7 +39,7 @@ describe 'VideoSpeedControl', ->
     describe 'when running on non-touch based device', ->
       beforeEach ->
         $('.speeds').removeClass 'open'
-        @speedControl = new VideoSpeedControl el: $('.secondary-controls'), speeds: @video.speeds, currentSpeed: '1.0'
+        @speedControl = new VideoSpeedControlAlpha el: $('.secondary-controls'), speeds: @video.speeds, currentSpeed: '1.0'
 
       it 'open the speed toggle on hover', ->
         $('.speeds').mouseenter()
@@ -57,7 +57,7 @@ describe 'VideoSpeedControl', ->
 
   describe 'changeVideoSpeed', ->
     beforeEach ->
-      @speedControl = new VideoSpeedControl el: $('.secondary-controls'), speeds: @video.speeds, currentSpeed: '1.0'
+      @speedControl = new VideoSpeedControlAlpha el: $('.secondary-controls'), speeds: @video.speeds, currentSpeed: '1.0'
       @video.setSpeed '1.0'
 
     describe 'when new speed is the same', ->
@@ -81,7 +81,7 @@ describe 'VideoSpeedControl', ->
 
   describe 'onSpeedChange', ->
     beforeEach ->
-      @speedControl = new VideoSpeedControl el: $('.secondary-controls'), speeds: @video.speeds, currentSpeed: '1.0'
+      @speedControl = new VideoSpeedControlAlpha el: $('.secondary-controls'), speeds: @video.speeds, currentSpeed: '1.0'
       $('li[data-speed="1.0"] a').addClass 'active'
       @speedControl.setSpeed '0.75'
 

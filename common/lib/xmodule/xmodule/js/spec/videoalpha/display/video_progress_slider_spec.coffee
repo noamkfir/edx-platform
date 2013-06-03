@@ -1,4 +1,4 @@
-describe 'VideoProgressSlider', ->
+describe 'VideoProgressSliderAlpha', ->
   beforeEach ->
     window.onTouchBasedDevice = jasmine.createSpy('onTouchBasedDevice').andReturn false
 
@@ -44,7 +44,7 @@ describe 'VideoProgressSlider', ->
 
   describe 'play', ->
     beforeEach ->
-      spyOn(VideoProgressSlider.prototype, 'buildSlider').andCallThrough()
+      spyOn(VideoProgressSliderAlpha.prototype, 'buildSlider').andCallThrough()
       @player = jasmine.stubVideoPlayerAlpha @
       @progressSlider = @player.progressSlider
 

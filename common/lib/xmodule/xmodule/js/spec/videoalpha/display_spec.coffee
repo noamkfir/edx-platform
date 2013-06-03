@@ -17,6 +17,7 @@ describe 'VideoAlpha', ->
         duration: 200
 
   afterEach ->
+    window.OldVideoPlayerAlpha = undefined
     window.onYouTubePlayerAPIReady = undefined
 
   describe 'constructor', ->

@@ -1,8 +1,8 @@
-describe 'VideoPlayer', ->
+describe 'VideoPlayerAlpha', ->
   beforeEach ->
     window.onTouchBasedDevice = jasmine.createSpy('onTouchBasedDevice').andReturn false
     # It tries to call methods of VideoProgressSlider on Spy
-    for part in ['VideoCaption', 'VideoSpeedControl', 'VideoVolumeControl', 'VideoProgressSlider', 'VideoControl']
+    for part in ['VideoCaptionAlpha', 'VideoSpeedControlAlpha', 'VideoVolumeControlAlpha', 'VideoProgressSliderAlpha', 'VideoControlAlpha']
       spyOn(window[part].prototype, 'initialize').andCallThrough()
     jasmine.stubVideoPlayerAlpha @, [], false
 
@@ -18,7 +18,7 @@ describe 'VideoPlayer', ->
 
     describe 'always', ->
       beforeEach ->
-        @player = new VideoPlayer video: @video
+        @player = new VideoPlayerAlpha video: @video
 
       it 'instanticate current time to zero', ->
         expect(@player.currentTime).toEqual 0
@@ -27,12 +27,12 @@ describe 'VideoPlayer', ->
         expect(@player.el).toHaveId 'video_id'
 
       it 'create video control', ->
-        expect(window.VideoControl.prototype.initialize).toHaveBeenCalled()
+        expect(window.VideoControlAlpha.prototype.initialize).toHaveBeenCalled()
         expect(@player.control).toBeDefined()
         expect(@player.control.el).toBe $('.video-controls', @player.el)
 
       it 'create video caption', ->
-        expect(window.VideoCaption.prototype.initialize).toHaveBeenCalled()
+        expect(window.VideoCaptionAlpha.prototype.initialize).toHaveBeenCalled()
         expect(@player.caption).toBeDefined()
         expect(@player.caption.el).toBe @player.el
         expect(@player.caption.youtubeId).toEqual 'normalSpeedYoutubeId'
@@ -40,14 +40,14 @@ describe 'VideoPlayer', ->
         expect(@player.caption.captionAssetPath).toEqual '/static/subs/'
 
       it 'create video speed control', ->
-        expect(window.VideoSpeedControl.prototype.initialize).toHaveBeenCalled()
+        expect(window.VideoSpeedControlAlpha.prototype.initialize).toHaveBeenCalled()
         expect(@player.speedControl).toBeDefined()
         expect(@player.speedControl.el).toBe $('.secondary-controls', @player.el)
         expect(@player.speedControl.speeds).toEqual ['0.75', '1.0']
         expect(@player.speedControl.currentSpeed).toEqual '1.0'
 
       it 'create video progress slider', ->
-        expect(window.VideoSpeedControl.prototype.initialize).toHaveBeenCalled()
+        expect(window.VideoSpeedControlAlpha.prototype.initialize).toHaveBeenCalled()
         expect(@player.progressSlider).toBeDefined()
         expect(@player.progressSlider.el).toBe $('.slider', @player.el)
 
@@ -60,6 +60,7 @@ describe 'VideoPlayer', ->
             showinfo: 0
             enablejsapi: 1
             modestbranding: 1
+            html5: 1
           videoId: 'normalSpeedYoutubeId'
           events:
             onReady: @player.onReady
@@ -94,14 +95,14 @@ describe 'VideoPlayer', ->
     describe 'when not on a touch based device', ->
       beforeEach ->
         $('.add-fullscreen, .hide-subtitles').removeData 'qtip'
-        @player = new VideoPlayer video: @video
+        @player = new VideoPlayerAlpha video: @video
 
       it 'add the tooltip to fullscreen and subtitle button', ->
         expect($('.add-fullscreen')).toHaveData 'qtip'
         expect($('.hide-subtitles')).toHaveData 'qtip'
 
       it 'create video volume control', ->
-        expect(window.VideoVolumeControl.prototype.initialize).toHaveBeenCalled()
+        expect(window.VideoVolumeControlAlpha.prototype.initialize).toHaveBeenCalled()
         expect(@player.volumeControl).toBeDefined()
         expect(@player.volumeControl.el).toBe $('.secondary-controls', @player.el)
 
@@ -109,14 +110,14 @@ describe 'VideoPlayer', ->
       beforeEach ->
         window.onTouchBasedDevice.andReturn true
         $('.add-fullscreen, .hide-subtitles').removeData 'qtip'
-        @player = new VideoPlayer video: @video
+        @player = new VideoPlayerAlpha video: @video
 
       it 'does not add the tooltip to fullscreen and subtitle button', ->
         expect($('.add-fullscreen')).not.toHaveData 'qtip'
         expect($('.hide-subtitles')).not.toHaveData 'qtip'
 
       it 'does not create video volume control', ->
-        expect(window.VideoVolumeControl.prototype.initialize).not.toHaveBeenCalled()
+        expect(window.VideoVolumeControlAlpha.prototype.initialize).not.toHaveBeenCalled()
         expect(@player.volumeControl).not.toBeDefined()
 
   describe 'onReady', ->
@@ -145,13 +146,12 @@ describe 'VideoPlayer', ->
         expect(@player.play).not.toHaveBeenCalled()
 
   describe 'onStateChange', ->
-    beforeEach ->
-      @player = new VideoPlayer video: @video
 
     describe 'when the video is unstarted', ->
       beforeEach ->
+        @player = new VideoPlayerAlpha video: @video
         spyOn @player.control, 'pause'
-        @player.caption.pause = jasmine.createSpy('VideoCaption.pause')
+        @player.caption.pause = jasmine.createSpy('VideoCaptionAlpha.pause')
         @player.onStateChange data: YT.PlayerState.UNSTARTED
 
       it 'pause the video control', ->
@@ -162,13 +162,14 @@ describe 'VideoPlayer', ->
 
     describe 'when the video is playing', ->
       beforeEach ->
-        @anotherPlayer = jasmine.createSpyObj 'AnotherPlayer', ['pauseVideo']
-        window.player = @anotherPlayer
+        @anotherPlayer = jasmine.createSpyObj 'AnotherPlayer', ['onPause']
+        window.OldVideoPlayerAlpha = @anotherPlayer
+        @player = new VideoPlayerAlpha video: @video
         spyOn @video, 'log'
         spyOn(window, 'setInterval').andReturn 100
         spyOn @player.control, 'play'
-        @player.caption.play = jasmine.createSpy('VideoCaption.play')
-        @player.progressSlider.play = jasmine.createSpy('VideoProgressSlider.play')
+        @player.caption.play = jasmine.createSpy('VideoCaptionAlpha.play')
+        @player.progressSlider.play = jasmine.createSpy('VideoProgressSliderAlpha.play')
         @player.player.getVideoEmbedCode.andReturn 'embedCode'
         @player.onStateChange data: YT.PlayerState.PLAYING
 
@@ -176,10 +177,10 @@ describe 'VideoPlayer', ->
         expect(@video.log).toHaveBeenCalledWith 'play_video'
 
       it 'pause other video player', ->
-        expect(@anotherPlayer.pauseVideo).toHaveBeenCalled()
+        expect(@anotherPlayer.onPause).toHaveBeenCalled()
 
       it 'set current video player as active player', ->
-        expect(window.player).toEqual @player.player
+        expect(window.OldVideoPlayerAlpha).toEqual @player
 
       it 'set update interval', ->
         expect(window.setInterval).toHaveBeenCalledWith @player.update, 200
@@ -196,21 +197,17 @@ describe 'VideoPlayer', ->
 
     describe 'when the video is paused', ->
       beforeEach ->
-        @player = new VideoPlayer video: @video
-        window.player = @player.player
+        @player = new VideoPlayerAlpha video: @video
         spyOn @video, 'log'
         spyOn window, 'clearInterval'
         spyOn @player.control, 'pause'
-        @player.caption.pause = jasmine.createSpy('VideoCaption.pause')
+        @player.caption.pause = jasmine.createSpy('VideoCaptionAlpha.pause')
         @player.player.interval = 100
         @player.player.getVideoEmbedCode.andReturn 'embedCode'
         @player.onStateChange data: YT.PlayerState.PAUSED
 
       it 'log the pause_video event', ->
         expect(@video.log).toHaveBeenCalledWith 'pause_video'
-
-      it 'set current video player as inactive', ->
-        expect(window.player).toBeNull()
 
       it 'clear update interval', ->
         expect(window.clearInterval).toHaveBeenCalledWith 100
@@ -224,8 +221,9 @@ describe 'VideoPlayer', ->
 
     describe 'when the video is ended', ->
       beforeEach ->
+        @player = new VideoPlayerAlpha video: @video
         spyOn @player.control, 'pause'
-        @player.caption.pause = jasmine.createSpy('VideoCaption.pause')
+        @player.caption.pause = jasmine.createSpy('VideoCaptionAlpha.pause')
         @player.onStateChange data: YT.PlayerState.ENDED
 
       it 'pause the video control', ->
@@ -236,7 +234,7 @@ describe 'VideoPlayer', ->
 
   describe 'onSeek', ->
     beforeEach ->
-      @player = new VideoPlayer video: @video
+      @player = new VideoPlayerAlpha video: @video
       spyOn window, 'clearInterval'
       @player.player.interval = 100
       spyOn @player, 'updatePlayTime'
@@ -266,20 +264,20 @@ describe 'VideoPlayer', ->
 
   describe 'onSpeedChange', ->
     beforeEach ->
-      @player = new VideoPlayer video: @video
+      @player = new VideoPlayerAlpha video: @video
       @player.currentTime = 60
       spyOn @player, 'updatePlayTime'
       spyOn(@video, 'setSpeed').andCallThrough()
 
     describe 'always', ->
       beforeEach ->
-        @player.onSpeedChange {}, '0.75'
+        @player.onSpeedChange {}, '0.75', false
 
       it 'convert the current time to the new speed', ->
         expect(@player.currentTime).toEqual '80.000'
 
       it 'set video speed to the new speed', ->
-        expect(@video.setSpeed).toHaveBeenCalledWith '0.75'
+        expect(@video.setSpeed).toHaveBeenCalledWith '0.75', false
 
       it 'tell video caption that the speed has changed', ->
         expect(@player.caption.currentSpeed).toEqual '0.75'
@@ -308,7 +306,7 @@ describe 'VideoPlayer', ->
 
   describe 'onVolumeChange', ->
     beforeEach ->
-      @player = new VideoPlayer video: @video
+      @player = new VideoPlayerAlpha video: @video
       @player.onVolumeChange undefined, 60
 
     it 'set the volume on player', ->
@@ -316,7 +314,7 @@ describe 'VideoPlayer', ->
 
   describe 'update', ->
     beforeEach ->
-      @player = new VideoPlayer video: @video
+      @player = new VideoPlayerAlpha video: @video
       spyOn @player, 'updatePlayTime'
 
     describe 'when the current time is unavailable from the player', ->
@@ -337,10 +335,10 @@ describe 'VideoPlayer', ->
 
   describe 'updatePlayTime', ->
     beforeEach ->
-      @player = new VideoPlayer video: @video
+      @player = new VideoPlayerAlpha video: @video
       spyOn(@video, 'getDuration').andReturn 1800
-      @player.caption.updatePlayTime = jasmine.createSpy('VideoCaption.updatePlayTime')
-      @player.progressSlider.updatePlayTime = jasmine.createSpy('VideoProgressSlider.updatePlayTime')
+      @player.caption.updatePlayTime = jasmine.createSpy('VideoCaptionAlpha.updatePlayTime')
+      @player.progressSlider.updatePlayTime = jasmine.createSpy('VideoProgressSliderAlpha.updatePlayTime')
       @player.updatePlayTime 60
 
     it 'update the video playback time', ->
@@ -354,8 +352,8 @@ describe 'VideoPlayer', ->
 
   describe 'toggleFullScreen', ->
     beforeEach ->
-      @player = new VideoPlayer video: @video
-      @player.caption.resize = jasmine.createSpy('VideoCaption.resize')
+      @player = new VideoPlayerAlpha video: @video
+      @player.caption.resize = jasmine.createSpy('VideoCaptionAlpha.resize')
 
     describe 'when the video player is not full screen', ->
       beforeEach ->
@@ -390,7 +388,7 @@ describe 'VideoPlayer', ->
 
   describe 'play', ->
     beforeEach ->
-      @player = new VideoPlayer video: @video
+      @player = new VideoPlayerAlpha video: @video
 
     describe 'when the player is not ready', ->
       beforeEach ->
@@ -410,7 +408,7 @@ describe 'VideoPlayer', ->
 
   describe 'isPlaying', ->
     beforeEach ->
-      @player = new VideoPlayer video: @video
+      @player = new VideoPlayerAlpha video: @video
 
     describe 'when the video is playing', ->
       beforeEach ->
@@ -428,7 +426,7 @@ describe 'VideoPlayer', ->
 
   describe 'pause', ->
     beforeEach ->
-      @player = new VideoPlayer video: @video
+      @player = new VideoPlayerAlpha video: @video
       @player.pause()
 
     it 'delegate to the Youtube player', ->
@@ -436,7 +434,7 @@ describe 'VideoPlayer', ->
 
   describe 'duration', ->
     beforeEach ->
-      @player = new VideoPlayer video: @video
+      @player = new VideoPlayerAlpha video: @video
       spyOn @video, 'getDuration'
       @player.duration()
 
@@ -445,7 +443,7 @@ describe 'VideoPlayer', ->
 
   describe 'currentSpeed', ->
     beforeEach ->
-      @player = new VideoPlayer video: @video
+      @player = new VideoPlayerAlpha video: @video
       @video.speed = '3.0'
 
     it 'delegate to the video', ->
@@ -453,7 +451,7 @@ describe 'VideoPlayer', ->
 
   describe 'volume', ->
     beforeEach ->
-      @player = new VideoPlayer video: @video
+      @player = new VideoPlayerAlpha video: @video
       @player.player.getVolume.andReturn 42
 
     describe 'without value', ->
