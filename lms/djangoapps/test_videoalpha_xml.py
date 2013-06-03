@@ -36,9 +36,11 @@ class VideoAlphaFactory(object):
         data_dir=""
         caption_asset_path=""
         autoplay="true"
-        from="01:00:03" to="01:00:10"
+        start_time="01:00:03" end_time="01:00:10"
         >
             <source src=".../mit-3091x/M-3091X-FA12-L21-3_100.mp4"/>
+            <source src=".../mit-3091x/M-3091X-FA12-L21-3_100.webm"/>
+            <source src=".../mit-3091x/M-3091X-FA12-L21-3_100.ogv"/>
         </videoalpha>
     """
 
@@ -101,17 +103,25 @@ class VideoAlphaModuleUnitTest(unittest.TestCase):
         # overwrite `system.render_template`
         context = module.get_html()
         expected_context = {
-            'track': None,
-            'show_captions': 'true',
-            'display_name': 'SampleProblem1',
-            'id': 'i4x-edX-videoalpha-default-SampleProblem1',
-            'end': 3610.0,
             'caption_asset_path': '/static/subs/',
-            'source': '.../mit-3091x/M-3091X-FA12-L21-3_100.mp4',
-            'streams': '0.75:jNCf2gIqpeE,1.0:ZwkTiUPN0mg,1.25:rsq9auxASqI,1.50:kMyNdzVHHgg',
-            'normal_speed_video_id': 'ZwkTiUPN0mg',
-            'position': 0,
-            'start': 3603.0
+            'data_dir': None,
+            'display_name': 'SampleProblem1',
+            'end': 3610.0,
+            'id': 'i4x-edX-videoalpha-default-SampleProblem1',
+            'show_captions': 'true',
+            'sources': {
+                'main': '.../mit-3091x/M-3091X-FA12-L21-3_100.mp4',
+                'mp4': '.../mit-3091x/M-3091X-FA12-L21-3_100.mp4',
+                'ogv': '.../mit-3091x/M-3091X-FA12-L21-3_100.ogv',
+                'webm': '.../mit-3091x/M-3091X-FA12-L21-3_100.webm'
+            },
+            'start': 3603.0,
+            'sub': None,
+            'track': None,
+            'youtube_streams': '0.75:jNCf2gIqpeE,1.0:ZwkTiUPN0mg,1.25:rsq9auxASqI,1.50:kMyNdzVHHgg'
         }
         self.assertDictEqual(context, expected_context)
-`
+
+        self.assertDictEqual(
+            json.loads(module.get_instance_state()),
+            {'position': 0})
