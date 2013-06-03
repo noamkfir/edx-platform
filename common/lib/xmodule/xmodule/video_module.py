@@ -1,3 +1,4 @@
+# pylint: disable=W0223
 """Video is ungraded Xmodule for support video content."""
 
 import json
