@@ -24,25 +24,28 @@ from xmodule.tests import test_system
 from xmodule.tests.test_logic import LogicTest
 
 
+SOURCE_XML = """
+    <videoalpha show_captions="true"
+    youtube="0.75:jNCf2gIqpeE,1.0:ZwkTiUPN0mg,1.25:rsq9auxASqI,1.50:kMyNdzVHHgg"
+    data_dir=""
+    caption_asset_path=""
+    autoplay="true"
+    start_time="01:00:03" end_time="01:00:10"
+    >
+        <source src=".../mit-3091x/M-3091X-FA12-L21-3_100.mp4"/>
+        <source src=".../mit-3091x/M-3091X-FA12-L21-3_100.webm"/>
+        <source src=".../mit-3091x/M-3091X-FA12-L21-3_100.ogv"/>
+    </videoalpha>
+"""
+
+
 class VideoAlphaFactory(object):
     """A helper class to create videoalpha modules with various parameters
     for testing.
     """
 
     # tag that uses youtube videos
-    sample_problem_xml_youtube = """
-        <videoalpha show_captions="true"
-        youtube="0.75:jNCf2gIqpeE,1.0:ZwkTiUPN0mg,1.25:rsq9auxASqI,1.50:kMyNdzVHHgg"
-        data_dir=""
-        caption_asset_path=""
-        autoplay="true"
-        start_time="01:00:03" end_time="01:00:10"
-        >
-            <source src=".../mit-3091x/M-3091X-FA12-L21-3_100.mp4"/>
-            <source src=".../mit-3091x/M-3091X-FA12-L21-3_100.webm"/>
-            <source src=".../mit-3091x/M-3091X-FA12-L21-3_100.ogv"/>
-        </videoalpha>
-    """
+    sample_problem_xml_youtube = SOURCE_XML
 
     @staticmethod
     def create():
@@ -104,21 +107,21 @@ class VideoAlphaModuleUnitTest(unittest.TestCase):
         context = module.get_html()
         expected_context = {
             'caption_asset_path': '/static/subs/',
+            'sub': None,
             'data_dir': None,
             'display_name': 'SampleProblem1',
             'end': 3610.0,
+            'start': 3603.0,
             'id': 'i4x-edX-videoalpha-default-SampleProblem1',
             'show_captions': 'true',
             'sources': {
-                'main': '.../mit-3091x/M-3091X-FA12-L21-3_100.mp4',
                 'mp4': '.../mit-3091x/M-3091X-FA12-L21-3_100.mp4',
-                'ogv': '.../mit-3091x/M-3091X-FA12-L21-3_100.ogv',
-                'webm': '.../mit-3091x/M-3091X-FA12-L21-3_100.webm'
+                'webm': '.../mit-3091x/M-3091X-FA12-L21-3_100.webm',
+                'main': '.../mit-3091x/M-3091X-FA12-L21-3_100.mp4',
+                'ogv': '.../mit-3091x/M-3091X-FA12-L21-3_100.ogv'
             },
-            'start': 3603.0,
-            'sub': None,
-            'track': None,
-            'youtube_streams': '0.75:jNCf2gIqpeE,1.0:ZwkTiUPN0mg,1.25:rsq9auxASqI,1.50:kMyNdzVHHgg'
+            'youtube_streams': '0.75:jNCf2gIqpeE,1.0:ZwkTiUPN0mg,1.25:rsq9auxASqI,1.50:kMyNdzVHHgg',
+            'track': None
         }
         self.assertDictEqual(context, expected_context)
 
