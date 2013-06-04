@@ -24,6 +24,8 @@ jasmine.stubbedCaption =
   start: [0, 10000, 20000, 30000]
   text: ['Caption at 0', 'Caption at 10000', 'Caption at 20000', 'Caption at 30000']
 
+jasmine.stubbedHtml5Speeds = ['0.75', '1.0', '1.25', '1.50']
+
 jasmine.stubRequests = ->
   spyOn($, 'ajax').andCallFake (settings) ->
     if match = settings.url.match /youtube\.com\/.+\/videos\/(.+)\?v=2&alt=jsonc/
