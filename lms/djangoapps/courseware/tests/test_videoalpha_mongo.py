@@ -42,7 +42,7 @@ class TestVideo(BaseTestXmodule):
             'show_captions': 'true',
             'display_name': 'Videoalpha 5',
             'end': 3610.0,
-            'id': 'i4x-MITx-999-videoalpha-Videoalpha_5',
+            'id': self.item_module.location.html_id(),
             'sources': {
                 'main': '.../mit-3091x/M-3091X-FA12-L21-3_100.mp4',
                 'mp4': '.../mit-3091x/M-3091X-FA12-L21-3_100.mp4',

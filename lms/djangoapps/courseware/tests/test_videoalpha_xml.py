@@ -51,7 +51,7 @@ class VideoAlphaFactory(object):
     def create():
         """Method return VideoAlpha Xmodule instance."""
         location = Location(["i4x", "edX", "videoalpha", "default",
-                             "SampleProblem{0}".format(1)])
+                             "SampleProblem1"])
         model_data = {'data': VideoAlphaFactory.sample_problem_xml_youtube}
 
         descriptor = Mock(weight="1")
@@ -112,7 +112,7 @@ class VideoAlphaModuleUnitTest(unittest.TestCase):
             'display_name': 'SampleProblem1',
             'end': 3610.0,
             'start': 3603.0,
-            'id': 'i4x-edX-videoalpha-default-SampleProblem1',
+            'id': module.location.html_id(),
             'show_captions': 'true',
             'sources': {
                 'mp4': '.../mit-3091x/M-3091X-FA12-L21-3_100.mp4',
