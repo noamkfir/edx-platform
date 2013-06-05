@@ -4,7 +4,7 @@ describe 'VideoPlayerAlpha', ->
     # It tries to call methods of VideoProgressSlider on Spy
     for part in ['VideoCaptionAlpha', 'VideoSpeedControlAlpha', 'VideoVolumeControlAlpha', 'VideoProgressSliderAlpha', 'VideoControlAlpha']
       spyOn(window[part].prototype, 'initialize').andCallThrough()
-    jasmine.stubVideoPlayerAlpha @, [], false
+    # jasmine.stubVideoPlayerAlpha @, [], false
 
   afterEach ->
     YT.Player = undefined
@@ -18,6 +18,7 @@ describe 'VideoPlayerAlpha', ->
 
     describe 'always', ->
       beforeEach ->
+        jasmine.stubVideoPlayerAlpha @, [], false
         @player = new VideoPlayerAlpha video: @video
 
       it 'instanticate current time to zero', ->
@@ -51,23 +52,6 @@ describe 'VideoPlayerAlpha', ->
         expect(@player.progressSlider).toBeDefined()
         expect(@player.progressSlider.el).toBe $('.slider', @player.el)
 
-      it 'create Youtube player', ->
-        expect(YT.Player).toHaveBeenCalledWith('id', {
-          playerVars:
-            controls: 0
-            wmode: 'transparent'
-            rel: 0
-            showinfo: 0
-            enablejsapi: 1
-            modestbranding: 1
-            html5: 1
-          videoId: 'normalSpeedYoutubeId'
-          events:
-            onReady: @player.onReady
-            onStateChange: @player.onStateChange
-            onPlaybackQualityChange: @player.onPlaybackQualityChange
-        })
-
       it 'bind to video control play event', ->
         expect($(@player.control)).toHandleWith 'play', @player.play
 
@@ -92,8 +76,47 @@ describe 'VideoPlayerAlpha', ->
       it 'bind to fullscreen switching button', ->
         expect($('.add-fullscreen')).toHandleWith 'click', @player.toggleFullScreen
 
+    it 'create Youtube player', ->
+      jasmine.stubVideoPlayerAlpha @, [], false, true
+      @player = new VideoPlayerAlpha video: @video
+      expect(YT.Player).toHaveBeenCalledWith('id', {
+        playerVars:
+          controls: 0
+          wmode: 'transparent'
+          rel: 0
+          showinfo: 0
+          enablejsapi: 1
+          modestbranding: 1
+          html5: 1
+        videoId: 'normalSpeedYoutubeId'
+        events:
+          onReady: @player.onReady
+          onStateChange: @player.onStateChange
+          onPlaybackQualityChange: @player.onPlaybackQualityChange
+      })
+
+    it 'create HTML5 player', ->
+      jasmine.stubVideoPlayerAlpha @, [], false, true
+      @player = new VideoPlayerAlpha video: @video
+      expect(YT.Player).toHaveBeenCalledWith('id', {
+        playerVars:
+          controls: 0
+          wmode: 'transparent'
+          rel: 0
+          showinfo: 0
+          enablejsapi: 1
+          modestbranding: 1
+          html5: 1
+        videoId: 'normalSpeedYoutubeId'
+        events:
+          onReady: @player.onReady
+          onStateChange: @player.onStateChange
+          onPlaybackQualityChange: @player.onPlaybackQualityChange
+      })
+
     describe 'when not on a touch based device', ->
       beforeEach ->
+        jasmine.stubVideoPlayerAlpha @, [], false
         $('.add-fullscreen, .hide-subtitles').removeData 'qtip'
         @player = new VideoPlayerAlpha video: @video
 
@@ -108,6 +131,7 @@ describe 'VideoPlayerAlpha', ->
 
     describe 'when on a touch based device', ->
       beforeEach ->
+        jasmine.stubVideoPlayerAlpha @, [], false
         window.onTouchBasedDevice.andReturn true
         $('.add-fullscreen, .hide-subtitles').removeData 'qtip'
         @player = new VideoPlayerAlpha video: @video
@@ -122,6 +146,7 @@ describe 'VideoPlayerAlpha', ->
 
   describe 'onReady', ->
     beforeEach ->
+      jasmine.stubVideoPlayerAlpha @, [], false
       @video.embed()
       @player = @video.player
       spyOnEvent @player, 'ready'
@@ -146,6 +171,9 @@ describe 'VideoPlayerAlpha', ->
         expect(@player.play).not.toHaveBeenCalled()
 
   describe 'onStateChange', ->
+
+    beforeEach ->
+      jasmine.stubVideoPlayerAlpha @, [], false
 
     describe 'when the video is unstarted', ->
       beforeEach ->
@@ -234,6 +262,7 @@ describe 'VideoPlayerAlpha', ->
 
   describe 'onSeek', ->
     beforeEach ->
+      jasmine.stubVideoPlayerAlpha @, [], false
       @player = new VideoPlayerAlpha video: @video
       spyOn window, 'clearInterval'
       @player.player.interval = 100
@@ -264,6 +293,7 @@ describe 'VideoPlayerAlpha', ->
 
   describe 'onSpeedChange', ->
     beforeEach ->
+      jasmine.stubVideoPlayerAlpha @, [], false
       @player = new VideoPlayerAlpha video: @video
       @player.currentTime = 60
       spyOn @player, 'updatePlayTime'
@@ -306,6 +336,7 @@ describe 'VideoPlayerAlpha', ->
 
   describe 'onVolumeChange', ->
     beforeEach ->
+      jasmine.stubVideoPlayerAlpha @, [], false
       @player = new VideoPlayerAlpha video: @video
       @player.onVolumeChange undefined, 60
 
@@ -314,6 +345,7 @@ describe 'VideoPlayerAlpha', ->
 
   describe 'update', ->
     beforeEach ->
+      jasmine.stubVideoPlayerAlpha @, [], false
       @player = new VideoPlayerAlpha video: @video
       spyOn @player, 'updatePlayTime'
 
@@ -335,6 +367,7 @@ describe 'VideoPlayerAlpha', ->
 
   describe 'updatePlayTime', ->
     beforeEach ->
+      jasmine.stubVideoPlayerAlpha @, [], false
       @player = new VideoPlayerAlpha video: @video
       spyOn(@video, 'getDuration').andReturn 1800
       @player.caption.updatePlayTime = jasmine.createSpy('VideoCaptionAlpha.updatePlayTime')
@@ -352,6 +385,7 @@ describe 'VideoPlayerAlpha', ->
 
   describe 'toggleFullScreen', ->
     beforeEach ->
+      jasmine.stubVideoPlayerAlpha @, [], false
       @player = new VideoPlayerAlpha video: @video
       @player.caption.resize = jasmine.createSpy('VideoCaptionAlpha.resize')
 
@@ -388,6 +422,7 @@ describe 'VideoPlayerAlpha', ->
 
   describe 'play', ->
     beforeEach ->
+      jasmine.stubVideoPlayerAlpha @, [], false
       @player = new VideoPlayerAlpha video: @video
 
     describe 'when the player is not ready', ->
@@ -408,6 +443,7 @@ describe 'VideoPlayerAlpha', ->
 
   describe 'isPlaying', ->
     beforeEach ->
+      jasmine.stubVideoPlayerAlpha @, [], false
       @player = new VideoPlayerAlpha video: @video
 
     describe 'when the video is playing', ->
@@ -426,6 +462,7 @@ describe 'VideoPlayerAlpha', ->
 
   describe 'pause', ->
     beforeEach ->
+      jasmine.stubVideoPlayerAlpha @, [], false
       @player = new VideoPlayerAlpha video: @video
       @player.pause()
 
@@ -434,6 +471,7 @@ describe 'VideoPlayerAlpha', ->
 
   describe 'duration', ->
     beforeEach ->
+      jasmine.stubVideoPlayerAlpha @, [], false
       @player = new VideoPlayerAlpha video: @video
       spyOn @video, 'getDuration'
       @player.duration()
@@ -443,6 +481,7 @@ describe 'VideoPlayerAlpha', ->
 
   describe 'currentSpeed', ->
     beforeEach ->
+      jasmine.stubVideoPlayerAlpha @, [], false
       @player = new VideoPlayerAlpha video: @video
       @video.speed = '3.0'
 
@@ -451,6 +490,7 @@ describe 'VideoPlayerAlpha', ->
 
   describe 'volume', ->
     beforeEach ->
+      jasmine.stubVideoPlayerAlpha @, [], false
       @player = new VideoPlayerAlpha video: @video
       @player.player.getVolume.andReturn 42
 

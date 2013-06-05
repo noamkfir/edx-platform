@@ -9,7 +9,7 @@ describe 'VideoAlpha', ->
 
   beforeEach ->
     jasmine.stubRequests()
-
+    window.onTouchBasedDevice = jasmine.createSpy('onTouchBasedDevice').andReturn false
     @videosDefinition = '0.75:slowerSpeedYoutubeId,1.0:normalSpeedYoutubeId'
     @slowerSpeedYoutubeId = 'slowerSpeedYoutubeId'
     @normalSpeedYoutubeId = 'normalSpeedYoutubeId'
@@ -101,104 +101,104 @@ describe 'VideoAlpha', ->
           expect(@video.player).toEqual @stubVideoPlayerAlpha
 
     describe 'HTML5', ->
-    beforeEach ->
-      loadFixtures 'videoalpha_html5.html'
-      @stubVideoPlayerAlpha = jasmine.createSpy('VideoPlayerAlpha')
-      $.cookie.andReturn '0.75'
-
-    describe 'by default', ->
       beforeEach ->
-        @originalHTML5 = window.HTML5Video
-        window.HTML5Video.Player = undefined
-        @video = new VideoAlpha '#example', @videosDefinition
+        loadFixtures 'videoalpha_html5.html'
+        @stubVideoPlayerAlpha = jasmine.createSpy('VideoPlayerAlpha')
+        $.cookie.andReturn '0.75'
 
-      afterEach ->
-        window.HTML5Video = @originalHTML5
+      describe 'by default', ->
+        beforeEach ->
+          @originalHTML5 = window.HTML5Video.Player
+          window.HTML5Video.Player = undefined
+          @video = new VideoAlpha '#example', @videosDefinition
 
-      it 'check videoType', ->
-        expect(@video.videoType).toEqual('html5')
+        afterEach ->
+          window.HTML5Video.Player = @originalHTML5
 
-      it 'reset the current video player', ->
-        expect(window.OldVideoPlayerAlpha).toBeUndefined()
+        it 'check videoType', ->
+          expect(@video.videoType).toEqual('html5')
 
-      it 'set the elements', ->
-        expect(@video.el).toBe '#video_id'
+        it 'reset the current video player', ->
+          expect(window.OldVideoPlayerAlpha).toBeUndefined()
 
-      it 'parse the videos if subtitles exist', ->
-        sub = 'test_name_of_the_subtitles'
-        expect(@video.videos).toEqual
-          '0.75': sub
-          '1.0': sub
-          '1.25': sub
-          '1.5': sub
+        it 'set the elements', ->
+          expect(@video.el).toBe '#video_id'
 
-      it 'parse the videos if subtitles doesn\'t exist', ->
-        $('#example').find('.video').data('sub', '')
-        @video = new VideoAlpha '#example', @videosDefinition
-        sub = ''
-        expect(@video.videos).toEqual
-          '0.75': sub
-          '1.0': sub
-          '1.25': sub
-          '1.5': sub
+        it 'parse the videos if subtitles exist', ->
+          sub = 'test_name_of_the_subtitles'
+          expect(@video.videos).toEqual
+            '0.75': sub
+            '1.0': sub
+            '1.25': sub
+            '1.5': sub
 
-      it 'parse Html5 sources', ->
-        html5Sources =
-          mp4: 'test.mp4'
-          webm: 'test.webm'
-          ogg: 'test.ogv'
-        expect(@video.html5Sources).toEqual html5Sources
+        it 'parse the videos if subtitles doesn\'t exist', ->
+          $('#example').find('.video').data('sub', '')
+          @video = new VideoAlpha '#example', @videosDefinition
+          sub = ''
+          expect(@video.videos).toEqual
+            '0.75': sub
+            '1.0': sub
+            '1.25': sub
+            '1.5': sub
 
-      it 'parse available video speeds', ->
-        speeds = jasmine.stubbedHtml5Speeds
-        expect(@video.speeds).toEqual speeds
+        it 'parse Html5 sources', ->
+          html5Sources =
+            mp4: 'test.mp4'
+            webm: 'test.webm'
+            ogg: 'test.ogv'
+          expect(@video.html5Sources).toEqual html5Sources
 
-      it 'set current video speed via cookie', ->
-        expect(@video.speed).toEqual '0.75'
+        it 'parse available video speeds', ->
+          speeds = jasmine.stubbedHtml5Speeds
+          expect(@video.speeds).toEqual speeds
 
-      it 'store a reference for this video player in the element', ->
-        expect($('.video').data('video')).toEqual @video
+        it 'set current video speed via cookie', ->
+          expect(@video.speed).toEqual '0.75'
 
-    describe 'when the HTML5 API is already available', ->
-      beforeEach ->
-        @originalHTML5Video = window.HTML5Video
-        window.HTML5Video = { Player: true }
-        spyOn(window, 'VideoPlayerAlpha').andReturn(@stubVideoPlayerAlpha)
-        @video = new VideoAlpha '#example', @videosDefinition
+        it 'store a reference for this video player in the element', ->
+          expect($('.video').data('video')).toEqual @video
 
-      afterEach ->
-        window.HTML5Video = @originalHTML5Video
+      describe 'when the HTML5 API is already available', ->
+        beforeEach ->
+          @originalHTML5Video = window.HTML5Video
+          window.HTML5Video = { Player: true }
+          spyOn(window, 'VideoPlayerAlpha').andReturn(@stubVideoPlayerAlpha)
+          @video = new VideoAlpha '#example', @videosDefinition
 
-      it 'create the Video Player', ->
-        expect(window.VideoPlayerAlpha).toHaveBeenCalledWith(video: @video)
-        expect(@video.player).toEqual @stubVideoPlayerAlpha
+        afterEach ->
+          window.HTML5Video = @originalHTML5Video
 
-    describe 'when the HTML5 API is not ready', ->
-      beforeEach ->
-        @originalHTML5Video = window.HTML5Video
-        window.HTML5Video = {}
-        @video = new VideoAlpha '#example', @videosDefinition
+        it 'create the Video Player', ->
+          expect(window.VideoPlayerAlpha).toHaveBeenCalledWith(video: @video)
+          expect(@video.player).toEqual @stubVideoPlayerAlpha
 
-      afterEach ->
-        window.HTML5Video = @originalHTML5Video
+      describe 'when the HTML5 API is not ready', ->
+        beforeEach ->
+          @originalHTML5Video = window.HTML5Video
+          window.HTML5Video = {}
+          @video = new VideoAlpha '#example', @videosDefinition
 
-      it 'set the callback on the window object', ->
-        expect(window.onHTML5PlayerAPIReady).toEqual jasmine.any(Function)
+        afterEach ->
+          window.HTML5Video = @originalHTML5Video
 
-    describe 'when the HTML5 API becoming ready', ->
-      beforeEach ->
-        @originalHTML5Video = window.HTML5Video
-        window.HTML5Video = {}
-        spyOn(window, 'VideoPlayerAlpha').andReturn(@stubVideoPlayerAlpha)
-        @video = new VideoAlpha '#example', @videosDefinition
-        window.onHTML5PlayerAPIReady()
+        it 'set the callback on the window object', ->
+          expect(window.onHTML5PlayerAPIReady).toEqual jasmine.any(Function)
 
-      afterEach ->
-        window.HTML5Video = @originalHTML5Video
+      describe 'when the HTML5 API becoming ready', ->
+        beforeEach ->
+          @originalHTML5Video = window.HTML5Video
+          window.HTML5Video = {}
+          spyOn(window, 'VideoPlayerAlpha').andReturn(@stubVideoPlayerAlpha)
+          @video = new VideoAlpha '#example', @videosDefinition
+          window.onHTML5PlayerAPIReady()
 
-      it 'create the Video Player for all video elements', ->
-        expect(window.VideoPlayerAlpha).toHaveBeenCalledWith(video: @video)
-        expect(@video.player).toEqual @stubVideoPlayerAlpha
+        afterEach ->
+          window.HTML5Video = @originalHTML5Video
+
+        it 'create the Video Player for all video elements', ->
+          expect(window.VideoPlayerAlpha).toHaveBeenCalledWith(video: @video)
+          expect(@video.player).toEqual @stubVideoPlayerAlpha
 
   describe 'youtubeId', ->
     beforeEach ->

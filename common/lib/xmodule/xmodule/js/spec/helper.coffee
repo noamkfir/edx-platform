@@ -69,11 +69,13 @@ jasmine.stubVideoPlayer = (context, enableParts, createPlayer=true) ->
   if createPlayer
     return new VideoPlayer(video: context.video)
 
-jasmine.stubVideoPlayerAlpha = (context, enableParts, createPlayer=true) ->
+jasmine.stubVideoPlayerAlpha = (context, enableParts, createPlayer=true, html5=false) ->
   suite = context.suite
   currentPartName = suite.description while suite = suite.parentSuite
-
-  loadFixtures 'videoalpha.html'
+  if html5 == false
+    loadFixtures 'videoalpha.html'
+  else
+    loadFixtures 'videoalpha_html5.html'
   jasmine.stubRequests()
   YT.Player = undefined
   window.OldVideoPlayerAlpha = undefined
